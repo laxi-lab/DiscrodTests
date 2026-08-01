@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест на вступление | Discord</title>
+  <style>
+    :root {
+      --bg-dark: #313338;
+      --bg-secondary: #2b2d31;
+      --bg-tertiary: #1e1f22;
+      --accent: #5865f2;
+      --accent-hover: #4752c4;
+      --text-normal: #dbdee1;
+      --text-muted: #949ba4;
+      --text-link: #00a8fc;
+      --danger: #da373c;
+      --success: #23a55a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-tertiary);
+      color: var(--text-normal);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .card {
+      background-color: var(--bg-dark);
+      padding: 32px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--bg-tertiary);
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #a1282c;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Loader */
+    .loader-container {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border-left-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Options */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-secondary);
+      border: 1px solid transparent;
+      padding: 12px 16px;
+      border-radius: 4px;
+      color: var(--text-normal);
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #35373c;
+      border-color: var(--accent);
+    }
+
+    .progress {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .status-box {
+      background-color: var(--bg-secondary);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      border-radius: 4px;
+      margin: 20px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .rejection-box {
+      background-color: rgba(218, 55, 60, 0.1);
+      border: 1px solid var(--danger);
+      color: #f23f43;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    
+    <!-- СЕКЦИЯ 1: Ввод данных -->
+    <div id="step-auth">
+      <h1>Авторизация Discord</h1>
+      <p class="subtitle">Пройдите верификацию для доступа к серверу</p>
+      
+      <form id="auth-form" onsubmit="startApp(event)">
+        <div class="input-group">
+          <label for="fname">Имя</label>
+          <input type="text" id="fname" required placeholder="Введите ваше имя">
+        </div>
+        
+        <div class="input-group">
+          <label for="lname">Фамилия</label>
+          <input type="text" id="lname" required placeholder="Введите вашу фамилию">
+        </div>
+        
+        <div class="input-group">
+          <label for="tag">Тег в Discord</label>
+          <input type="text" id="tag" required placeholder="username или user#0000">
+        </div>
+        
+        <button type="submit" class="btn">Начать проверку</button>
+      </form>
+    </div>
+
+    <!-- СЕКЦИЯ 2: Загрузка -->
+    <div id="step-loader" class="hidden">
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p id="loader-text">Загрузка психологического теста...</p>
+      </div>
+    </div>
+
+    <!-- СЕКЦИЯ 3: Вопросы -->
+    <div id="step-quiz" class="hidden">
+      <div class="progress" id="quiz-progress">Вопрос 1 из 15</div>
+      <h2 id="quiz-question" style="text-align: left; font-size: 18px;">Текст вопроса</h2>
+      
+      <div class="options-container" id="quiz-options">
+        <!-- Варианты генерируются через JS -->
+      </div>
+    </div>
+
+    <!-- СЕКЦИЯ 4: Ожидание решения -->
+    <div id="step-result" class="hidden">
+      <h2>Тест завершен!</h2>
+      <p class="subtitle" id="user-score-text">Ваш результат: 15 / 15 (100%)</p>
+      
+      <div class="status-box">
+        Мы подали на рассмотрение администрации сервера "Сервер broccent", пожалуйста подождите пару минут, оставайтесь на сайте.
+      </div>
+      
+      <div class="loader-container" id="mini-loader">
+        <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
+        <p style="font-size: 13px; color: var(--text-muted);">Ожидание ответа от бота модерации...</p>
+      </div>
+
+      <button id="show-response-btn" class="btn btn-danger hidden" onclick="showAdminResponse()">Показать ответ администрации</button>
+
+      <div id="rejection-reason" class="rejection-box hidden">
+        <strong>ОТКЛОНЕНО АДМИНИСТРАЦИЕЙ</strong><br><br>
+        Причина: Ваша форма мышления признана «слишком идеальной и подозрительной». Администратор усомнился в том, что вы человек, а не нейросеть. Доступ к серверу <b>"Сервер broccent"</b> заблокирован.<br><br>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Что такое «чувствование» на самом деле?",
+        answers: [
+          "Личное субъективное переживание внутреннего опыта.",
+          "Совокупность электрических импульсов мозга без субъективной стороны.",
+          "Способность организма реагировать на внешние раздражители.",
+          "Работа долговременной памяти."
+        ],
+        correct: 0
+      },
+      {
+        q: "Как из физической материи возникает субъективный внутренний мир человека?",
+        answers: [
+          "Этот механизм до сих пор неизвестен и считается одной из труднейших проблем сознания.",
+          "Он полностью объясняется квантовой механикой.",
+          "Всё определяется только количеством нейронов.",
+          "Сознание возникает исключительно благодаря речи."
+        ],
+        correct: 0
+      },
+      {
+        q: "Обладаем ли мы свободой воли?",
+        answers: [
+          "Окончательного ответа пока не существует.",
+          "Нет, свобода полностью опровергнута современной физикой.",
+          "Да, свобода доказана экспериментально.",
+          "Она появляется только после определённого возраста."
+        ],
+        correct: 0
+      },
+      {
+        q: "В чём заключается объективный смысл человеческой жизни?",
+        answers: [
+          "Универсального объективного смысла не найдено; человек создаёт его сам.",
+          "Главная цель — передача генов потомству.",
+          "Смысл определяется исключительно обществом.",
+          "Он одинаков для всех культур и эпох."
+        ],
+        correct: 0
+      },
+      {
+        q: "Что происходит с сознанием после смерти?",
+        answers: [
+          "Научного ответа нет; существуют различные философские и религиозные взгляды.",
+          "Сознание обязательно продолжает существование.",
+          "Сознание превращается в энергию.",
+          "Память полностью сохраняется во Вселенной."
+        ],
+        correct: 0
+      },
+      {
+        q: "Как решить этическую дилемму, где любой выбор ведёт к трагедии?",
+        answers: [
+          "Единственного правильного решения не существует; многое зависит от ценностей и контекста.",
+          "Всегда нужно выбирать вариант с меньшими потерями.",
+          "Следует отказаться от любого действия.",
+          "Необходимо подчиняться только закону."
+        ],
+        correct: 0
+      },
+      {
+        q: "Как ощущается осознание собственной смертности?",
+        answers: [
+          "Оно может одновременно усиливать тревогу и делать жизнь более ценной.",
+          "Оно всегда вызывает депрессию.",
+          "Люди практически никогда не думают об этом.",
+          "Это чувство полностью исчезает после зрелости."
+        ],
+        correct: 0
+      },
+      {
+        q: "Когда симпатия превращается в настоящую любовь?",
+        answers: [
+          "Когда ценность другого человека становится важнее собственного эго.",
+          "После трёх лет отношений.",
+          "После появления общей собственности.",
+          "Когда полностью исчезает ревность."
+        ],
+        correct: 0
+      },
+      {
+        q: "Что происходит во время глубокого изменения убеждений?",
+        answers: [
+          "Человек полностью переосмысливает прежнюю картину мира.",
+          "Просто запоминает новые факты.",
+          "Теряет способность сомневаться.",
+          "Меняется исключительно память."
+        ],
+        correct: 0
+      },
+      {
+        q: "Если постепенно заменить все атомы тела человека, останется ли он тем же человеком?",
+        answers: [
+          "Однозначного ответа нет; это философский парадокс идентичности.",
+          "Нет, личность исчезнет после первой замены.",
+          "Да, потому что атомы не имеют значения.",
+          "Всё зависит только от возраста человека."
+        ],
+        correct: 0
+      },
+      {
+        q: "Где проходит граница между личностью человека и влиянием общества?",
+        answers: [
+          "Чёткой границы определить невозможно.",
+          "Она заканчивается после совершеннолетия.",
+          "Всё определяется исключительно воспитанием.",
+          "Всё определяется исключительно генетикой."
+        ],
+        correct: 0
+      },
+      {
+        q: "Почему люди способны жертвовать собой ради других?",
+        answers: [
+          "Потому что мораль, любовь и убеждения могут оказаться важнее собственной жизни.",
+          "Из-за инстинкта самосохранения.",
+          "Только из-за давления общества.",
+          "Из-за недостатка логического мышления."
+        ],
+        correct: 0
+      },
+      {
+        q: "Откуда появляется творческое озарение?",
+        answers: [
+          "Из сложной бессознательной переработки опыта и неожиданных связей между идеями.",
+          "Только из высокого уровня интеллекта.",
+          "Исключительно из генетики.",
+          "Лишь после длительного отдыха."
+        ],
+        correct: 0
+      },
+      {
+        q: "Станет ли человек счастливее, если полностью исчезнут страдания?",
+        answers: [
+          "Не обязательно; счастье часто воспринимается через контраст и преодоление трудностей.",
+          "Да, абсолютно всегда.",
+          "Нет, счастье вообще невозможно.",
+          "Это зависит только от возраста."
+        ],
+        correct: 0
+      },
+      {
+        q: "Что делает человека человеком?",
+        answers: [
+          "Сочетание сознания, сострадания, поиска смысла, любви и способности создавать культуру.",
+          "Только высокий интеллект.",
+          "Исключительно наличие речи.",
+          "Только биологическое происхождение."
+        ],
+        correct: 0
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startApp(e) {
+      e.preventDefault();
+      document.getElementById('step-auth').classList.add('hidden');
+      document.getElementById('step-loader').classList.remove('hidden');
+
+      setTimeout(() => {
+        document.getElementById('step-loader').classList.add('hidden');
+        document.getElementById('step-quiz').classList.remove('hidden');
+        renderQuestion();
+      }, 2000);
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('quiz-progress').innerText = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+      document.getElementById('quiz-question').innerText = q.q;
+
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+      q.answers.forEach((ans, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = `${letters[index]}. ${ans}`;
+        btn.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(index) {
+      if (index === questions[currentQuestion].correct) {
+        score++;
+      }
+
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById('step-quiz').classList.add('hidden');
+      document.getElementById('step-result').classList.remove('hidden');
+      document.getElementById('user-score-text').innerText = `Ваш результат: ${score} / ${questions.length} (${Math.round((score/questions.length)*100)}%)`;
+
+      // Имитация тайм-аута перед появлением кнопки ответа администрации (4 секунды)
+      setTimeout(() => {
+        document.getElementById('mini-loader').classList.add('hidden');
+        document.getElementById('show-response-btn').classList.remove('hidden');
+      }, 4000);
+    }
+
+    function showAdminResponse() {
+      document.getElementById('show-response-btn').classList.add('hidden');
+      document.getElementById('rejection-reason').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
