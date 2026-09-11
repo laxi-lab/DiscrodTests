@@ -1,0 +1,9 @@
+Аватары взяты из предоставленного изображения, слева направо:
+1. Melissa -> assets/melissa.png
+2. Пал Лаич -> assets/pal.png
+3. Folzy1446 -> assets/folzy.png
+4. мазеллов ебло 15 -> assets/mazellov.png
+5. NRYB -> assets/nryb.png
+6. SanDorado -> assets/sandorado.png
+
+Иконка Discord из исходного сайта удалена.
