@@ -35,14 +35,22 @@
       position: relative;
     }
 
-    /* Логотип Discord в углу */
+    /* Аккуратный оригинальный логотип Discord в углу */
     .discord-logo-corner {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      width: 40px;
-      height: 40px;
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      width: 48px;
+      height: 36px;
       fill: var(--accent);
+      opacity: 0.85;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+
+    .discord-logo-corner:hover {
+      opacity: 1;
+      transform: scale(1.05);
     }
 
     .card {
@@ -53,6 +61,7 @@
       max-width: 580px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
       position: relative;
+      z-index: 1;
     }
 
     h1, h2 {
@@ -155,6 +164,7 @@
       height: 48px;
       border-radius: 50%;
       object-fit: cover;
+      background-color: var(--bg-tertiary);
     }
 
     .user-name {
@@ -286,32 +296,32 @@
       
       <div class="user-list">
         <div class="user-card">
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUHDCCAEgwggA4oAMCAQICA1BvbDADQYJKoZIhvcNAQELBQAwHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMB4XDTI2MDEwMDAwMDAwMFoXDTI3MDEwMDAwMDAwMFowHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzwIDAQABo1gwVTAOBgNVHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFFAvBgMBiDAOBgNVHSMEGDAWgBFAvBgMBiDAOBgNVHQ8BAf8EBAMCB4AwDQYJKoZIhvcNAQELBQADGGGG" id="img-melissa" class="user-avatar" alt="Melissa">
+          <img src="melissa.png" class="user-avatar" alt="Melissa">
           <span class="user-name">Melissa</span>
           <span class="badge">Подтверждён</span>
         </div>
         <div class="user-card">
-          <img src="" id="img-pal" class="user-avatar" alt="Пал Лаич">
+          <img src="pal.png" class="user-avatar" alt="Пал Лаич">
           <span class="user-name">Пал Лаич</span>
           <span class="badge">Подтверждён</span>
         </div>
         <div class="user-card">
-          <img src="" id="img-folzy" class="user-avatar" alt="Folzy1446">
+          <img src="folzy.png" class="user-avatar" alt="Folzy1446">
           <span class="user-name">Folzy1446</span>
           <span class="badge">Подтверждён</span>
         </div>
         <div class="user-card">
-          <img src="" id="img-mazellov" class="user-avatar" alt="мазеллов ебло 15">
+          <img src="mazellov.png" class="user-avatar" alt="мазеллов ебло 15">
           <span class="user-name">мазеллов ебло 15</span>
           <span class="badge">Подтверждён</span>
         </div>
         <div class="user-card">
-          <img src="" id="img-nryb" class="user-avatar" alt="NRYB">
+          <img src="nryb.png" class="user-avatar" alt="NRYB">
           <span class="user-name">NRYB</span>
           <span class="badge">Подтверждён</span>
         </div>
         <div class="user-card">
-          <img src="" id="img-sandorado" class="user-avatar" alt="SanDorado">
+          <img src="sandorado.png" class="user-avatar" alt="SanDorado">
           <span class="user-name">SanDorado</span>
           <span class="badge">Подтверждён</span>
         </div>
@@ -372,7 +382,6 @@
   </div>
 
   <script>
-    // База пользователей для входа
     const validUsers = [
       { nick: "Melissa", pass: "mel1231" },
       { nick: "Пал Лаич", pass: "lol1234" },
@@ -382,17 +391,6 @@
       { nick: "SanDorado", pass: "sana 1122" }
     ];
 
-    // Изображения участников
-    const avatars = {
-      melissa: "data:image/png;base64,iVBORw0KGgoAAAANSUHDCCAEgwggA4oAMCAQICA1BvbDADQYJKoZIhvcNAQELBQAwHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMB4XDTI2MDEwMDAwMDAwMFoXDTI3MDEwMDAwMDAwMFowHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzwIDAQABo1gwVTAOBgNVHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFFAvBgMBiDAOBgNVHSMEGDAWgBFAvBgMBiDAOBgNVHQ8BAf8EBAMCB4AwDQYJKoZIhvcNAQELBQADGGGG",
-      pal: "https://i.imgur.com/8Q9Z5bX.png",
-      folzy: "https://i.imgur.com/4N3a1Z1.png",
-      mazellov: "https://i.imgur.com/2XyZ1W8.png",
-      nryb: "https://i.imgur.com/6VxV8Y3.png",
-      sandorado: "https://i.imgur.com/3Z7W1X9.png"
-    };
-
-    // Вопросы с назначением правильного вердикта (индекс 0..3)
     const questions = [
       { q: "1. Если человек совершил преступление, потому что все обстоятельства его жизни практически гарантированно привели бы его к этому поступку, насколько он действительно виновен?", a: ["Полностью виновен: обстоятельства не отменяют ответственности", "Частично виновен: обстоятельства уменьшают ответственность", "Виновен лишь формально, поскольку свободной воли практически не было", "Само понятие вины в таком случае становится проблематичным"], c: 3 },
       { q: "2. Если человек делает добро исключительно ради собственной репутации, является ли его поступок морально добрым?", a: ["Да, важен сам результат", "Да, если он никому не причинил вреда", "Нет, намерение делает поступок эгоистичным", "Нельзя определить моральность только по мотиву"], c: 2 },
@@ -421,14 +419,6 @@
 
     let currentQuestion = 0;
     let score = 0;
-
-    // Вставка вырезанных аватарок прямо в img
-    document.getElementById('img-melissa').src = avatars.melissa;
-    document.getElementById('img-pal').src = avatars.pal;
-    document.getElementById('img-folzy').src = avatars.folzy;
-    document.getElementById('img-mazellov').src = avatars.mazellov;
-    document.getElementById('img-nryb').src = avatars.nryb;
-    document.getElementById('img-sandorado').src = avatars.sandorado;
 
     function checkLoginInputs() {
       const nick = document.getElementById('login-nickname').value.trim();
@@ -521,7 +511,6 @@
       document.getElementById('step-result').classList.remove('hidden');
       document.getElementById('user-score-text').innerText = `Правильных ответов: ${score} из ${questions.length}`;
 
-      // Ожидание 25 секунд для пранка
       setTimeout(() => {
         document.getElementById('wait-loader').classList.add('hidden');
         document.getElementById('btn-show-response').classList.remove('hidden');
