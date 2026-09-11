@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тест на вступление | Discord</title>
+  <title>Сервер broccent | Авторизация</title>
   <style>
     :root {
       --bg-dark: #313338;
@@ -13,7 +13,6 @@
       --accent-hover: #4752c4;
       --text-normal: #dbdee1;
       --text-muted: #949ba4;
-      --text-link: #00a8fc;
       --danger: #da373c;
       --success: #23a55a;
     }
@@ -33,6 +32,17 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      position: relative;
+    }
+
+    /* Логотип Discord в углу */
+    .discord-logo-corner {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      fill: var(--accent);
     }
 
     .card {
@@ -40,8 +50,9 @@
       padding: 32px;
       border-radius: 8px;
       width: 100%;
-      max-width: 520px;
+      max-width: 580px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+      position: relative;
     }
 
     h1, h2 {
@@ -70,7 +81,7 @@
       margin-bottom: 8px;
     }
 
-    input[type="text"] {
+    input[type="text"], input[type="password"] {
       width: 100%;
       padding: 10px;
       background-color: var(--bg-tertiary);
@@ -82,7 +93,7 @@
       transition: border-color 0.2s;
     }
 
-    input[type="text"]:focus {
+    input[type="text"]:focus, input[type="password"]:focus {
       border-color: var(--accent);
     }
 
@@ -104,16 +115,62 @@
       background-color: var(--accent-hover);
     }
 
-    .btn-danger {
-      background-color: var(--danger);
+    .btn-secondary {
+      background-color: #4e5058;
     }
-
-    .btn-danger:hover {
-      background-color: #a1282c;
+    .btn-secondary:hover {
+      background-color: #6d6f78;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
+    }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Участники */
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      padding: 12px 16px;
+      border-radius: 6px;
+      gap: 16px;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .badge {
+      background-color: rgba(35, 165, 90, 0.2);
+      color: var(--success);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: auto;
+      font-weight: 600;
     }
 
     /* Loader */
@@ -137,7 +194,7 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Options */
+    /* Quiz */
     .options-container {
       display: flex;
       flex-direction: column;
@@ -180,7 +237,7 @@
       line-height: 1.5;
     }
 
-    .rejection-box {
+    .response-box {
       background-color: rgba(218, 55, 60, 0.1);
       border: 1px solid var(--danger);
       color: #f23f43;
@@ -194,242 +251,238 @@
 </head>
 <body>
 
+  <!-- Логотип Discord в левом верхнем углу -->
+  <svg class="discord-logo-corner" viewBox="0 0 127.14 96.36">
+    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0,3.36,12.33,97.68,97.68,0,0,0-29.28,0A72.37,72.37,0,0,0,58.91,0,105.2,105.2,0,0,0,32.68,8.07c-26.1,39.08-33.2,77.2-29.68,114.7a105.41,105.41,0,0,0,32.22,16.3,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a73.57,73.57,0,0,0,64.32,0c.87.69,1.76,1.37,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.24-16.3C141.5,41.65,133.5,3.5,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5.08-12.69,11.45-12.69S54,46,53.89,53,48.8,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5.08-12.69,11.44-12.69S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+  </svg>
+
   <div class="card">
     
-    <!-- СЕКЦИЯ 1: Ввод данных -->
-    <div id="step-auth">
-      <h1>Авторизация Discord</h1>
-      <p class="subtitle">Пройдите верификацию для доступа к серверу</p>
+    <!-- 1. ФОРМА ВХОДА -->
+    <div id="step-login">
+      <h1>Добро пожаловать</h1>
+      <p class="subtitle">Вход на сервер broccent</p>
       
-      <form id="auth-form" onsubmit="startApp(event)">
-        <div class="input-group">
-          <label for="fname">Имя</label>
-          <input type="text" id="fname" required placeholder="Введите ваше имя">
-        </div>
-        
-        <div class="input-group">
-          <label for="lname">Фамилия</label>
-          <input type="text" id="lname" required placeholder="Введите вашу фамилию">
-        </div>
-        
-        <div class="input-group">
-          <label for="tag">Тег в Discord</label>
-          <input type="text" id="tag" required placeholder="username или user#0000">
-        </div>
-        
-        <button type="submit" class="btn">Начать проверку</button>
-      </form>
-    </div>
-
-    <!-- СЕКЦИЯ 2: Загрузка -->
-    <div id="step-loader" class="hidden">
-      <div class="loader-container">
-        <div class="spinner"></div>
-        <p id="loader-text">Загрузка психологического теста...</p>
+      <div class="input-group">
+        <label for="login-nickname">Никнейм</label>
+        <input type="text" id="login-nickname" placeholder="Введите ваш ник" oninput="checkLoginInputs()">
       </div>
+      
+      <div class="input-group">
+        <label for="login-password">Пароль</label>
+        <input type="password" id="login-password" placeholder="••••••••" oninput="checkLoginInputs()">
+      </div>
+
+      <p id="login-error" class="error-msg hidden">Неверный никнейм или пароль!</p>
+
+      <button id="btn-login" class="btn hidden" onclick="handleLogin()">Войти</button>
+      <button class="btn btn-secondary" onclick="showApplyForm()" style="margin-top: 15px;">Подать заявку</button>
     </div>
 
-    <!-- СЕКЦИЯ 3: Вопросы -->
+    <!-- 2. МЕНЮ ПОДТВЕРЖДЕННЫХ УЧАСТНИКОВ -->
+    <div id="step-members" class="hidden">
+      <h1>Сервер broccent</h1>
+      <p class="subtitle">Список подтвержденных людей группы</p>
+      
+      <div class="user-list">
+        <div class="user-card">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUHDCCAEgwggA4oAMCAQICA1BvbDADQYJKoZIhvcNAQELBQAwHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMB4XDTI2MDEwMDAwMDAwMFoXDTI3MDEwMDAwMDAwMFowHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzwIDAQABo1gwVTAOBgNVHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFFAvBgMBiDAOBgNVHSMEGDAWgBFAvBgMBiDAOBgNVHQ8BAf8EBAMCB4AwDQYJKoZIhvcNAQELBQADGGGG" id="img-melissa" class="user-avatar" alt="Melissa">
+          <span class="user-name">Melissa</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+        <div class="user-card">
+          <img src="" id="img-pal" class="user-avatar" alt="Пал Лаич">
+          <span class="user-name">Пал Лаич</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+        <div class="user-card">
+          <img src="" id="img-folzy" class="user-avatar" alt="Folzy1446">
+          <span class="user-name">Folzy1446</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+        <div class="user-card">
+          <img src="" id="img-mazellov" class="user-avatar" alt="мазеллов ебло 15">
+          <span class="user-name">мазеллов ебло 15</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+        <div class="user-card">
+          <img src="" id="img-nryb" class="user-avatar" alt="NRYB">
+          <span class="user-name">NRYB</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+        <div class="user-card">
+          <img src="" id="img-sandorado" class="user-avatar" alt="SanDorado">
+          <span class="user-name">SanDorado</span>
+          <span class="badge">Подтверждён</span>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="location.reload()" style="margin-top: 25px;">Выйти</button>
+    </div>
+
+    <!-- 3. АНКЕТА ПОДАЧИ ЗАЯВКИ -->
+    <div id="step-apply" class="hidden">
+      <h1>Заявка на доступ</h1>
+      <p class="subtitle">Заполните анкету для прохождения теста</p>
+      
+      <div class="input-group">
+        <label for="apply-name">Имя</label>
+        <input type="text" id="apply-name" placeholder="Введите имя" oninput="checkApplyInputs()">
+      </div>
+      <div class="input-group">
+        <label for="apply-fname">Фамилия</label>
+        <input type="text" id="apply-fname" placeholder="Введите фамилию" oninput="checkApplyInputs()">
+      </div>
+      <div class="input-group">
+        <label for="apply-tag">Тег в Discord</label>
+        <input type="text" id="apply-tag" placeholder="username или user#0000" oninput="checkApplyInputs()">
+      </div>
+
+      <button id="btn-start-test" class="btn hidden" onclick="startTest()">Начать тест</button>
+      <button class="btn btn-secondary" onclick="showLogin()" style="margin-top: 10px;">Назад</button>
+    </div>
+
+    <!-- 4. ТЕСТ -->
     <div id="step-quiz" class="hidden">
-      <div class="progress" id="quiz-progress">Вопрос 1 из 15</div>
-      <h2 id="quiz-question" style="text-align: left; font-size: 18px;">Текст вопроса</h2>
+      <div class="progress" id="quiz-progress">Вопрос 1 из 23</div>
+      <h2 id="quiz-question" style="text-align: left; font-size: 16px; line-height: 1.4;">Вопрос</h2>
       
-      <div class="options-container" id="quiz-options">
-        <!-- Варианты генерируются через JS -->
-      </div>
+      <div class="options-container" id="quiz-options"></div>
     </div>
 
-    <!-- СЕКЦИЯ 4: Ожидание решения -->
+    <!-- 5. ОЖИДАНИЕ / РЕЗУЛЬТАТ -->
     <div id="step-result" class="hidden">
-      <h2>Тест завершен!</h2>
-      <p class="subtitle" id="user-score-text">Ваш результат: 15 / 15 (100%)</p>
+      <h2>Тестирование завершено</h2>
+      <p class="subtitle" id="user-score-text">Формирование отчета...</p>
       
       <div class="status-box">
         Мы подали на рассмотрение администрации сервера "Сервер broccent", пожалуйста подождите пару минут, оставайтесь на сайте.
       </div>
       
-      <div class="loader-container" id="mini-loader">
-        <div class="spinner" style="width: 30px; height: 30px; border-width: 3px;"></div>
-        <p style="font-size: 13px; color: var(--text-muted);">Ожидание ответа от бота модерации...</p>
+      <div class="loader-container" id="wait-loader">
+        <div class="spinner"></div>
+        <p style="font-size: 14px; color: var(--text-muted);">Идет анализ ответов ботом модерации (~25 сек)...</p>
       </div>
 
-      <button id="show-response-btn" class="btn btn-danger hidden" onclick="showAdminResponse()">Показать ответ администрации</button>
+      <button id="btn-show-response" class="btn hidden" onclick="revealResponse()">Показать ответ администрации</button>
 
-      <div id="rejection-reason" class="rejection-box hidden">
-        <strong>ОТКЛОНЕНО АДМИНИСТРАЦИЕЙ</strong><br><br>
-        Причина: Ваша форма мышления признана «слишком идеальной и подозрительной». Администратор усомнился в том, что вы человек, а не нейросеть. Доступ к серверу <b>"Сервер broccent"</b> заблокирован.<br><br>
-      </div>
+      <div id="response-text" class="response-box hidden"></div>
     </div>
 
   </div>
 
   <script>
+    // База пользователей для входа
+    const validUsers = [
+      { nick: "Melissa", pass: "mel1231" },
+      { nick: "Пал Лаич", pass: "lol1234" },
+      { nick: "Folzy1446", pass: "fol1221" },
+      { nick: "мазеллов ебло 15", pass: "mzlf1122" },
+      { nick: "NRYB", pass: "nrebs1231" },
+      { nick: "SanDorado", pass: "sana 1122" }
+    ];
+
+    // Изображения участников
+    const avatars = {
+      melissa: "data:image/png;base64,iVBORw0KGgoAAAANSUHDCCAEgwggA4oAMCAQICA1BvbDADQYJKoZIhvcNAQELBQAwHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMB4XDTI2MDEwMDAwMDAwMFoXDTI3MDEwMDAwMDAwMFowHDEaMBgGA1UEAwwSU2FtcGxlIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzwIDAQABo1gwVTAOBgNVHQ8BAf8EBAMCB4AwHQYDVR0OBBYEFFAvBgMBiDAOBgNVHSMEGDAWgBFAvBgMBiDAOBgNVHQ8BAf8EBAMCB4AwDQYJKoZIhvcNAQELBQADGGGG",
+      pal: "https://i.imgur.com/8Q9Z5bX.png",
+      folzy: "https://i.imgur.com/4N3a1Z1.png",
+      mazellov: "https://i.imgur.com/2XyZ1W8.png",
+      nryb: "https://i.imgur.com/6VxV8Y3.png",
+      sandorado: "https://i.imgur.com/3Z7W1X9.png"
+    };
+
+    // Вопросы с назначением правильного вердикта (индекс 0..3)
     const questions = [
-      {
-        q: "Что такое «чувствование» на самом деле?",
-        answers: [
-          "Личное субъективное переживание внутреннего опыта.",
-          "Совокупность электрических импульсов мозга без субъективной стороны.",
-          "Способность организма реагировать на внешние раздражители.",
-          "Работа долговременной памяти."
-        ],
-        correct: 0
-      },
-      {
-        q: "Как из физической материи возникает субъективный внутренний мир человека?",
-        answers: [
-          "Этот механизм до сих пор неизвестен и считается одной из труднейших проблем сознания.",
-          "Он полностью объясняется квантовой механикой.",
-          "Всё определяется только количеством нейронов.",
-          "Сознание возникает исключительно благодаря речи."
-        ],
-        correct: 0
-      },
-      {
-        q: "Обладаем ли мы свободой воли?",
-        answers: [
-          "Окончательного ответа пока не существует.",
-          "Нет, свобода полностью опровергнута современной физикой.",
-          "Да, свобода доказана экспериментально.",
-          "Она появляется только после определённого возраста."
-        ],
-        correct: 0
-      },
-      {
-        q: "В чём заключается объективный смысл человеческой жизни?",
-        answers: [
-          "Универсального объективного смысла не найдено; человек создаёт его сам.",
-          "Главная цель — передача генов потомству.",
-          "Смысл определяется исключительно обществом.",
-          "Он одинаков для всех культур и эпох."
-        ],
-        correct: 0
-      },
-      {
-        q: "Что происходит с сознанием после смерти?",
-        answers: [
-          "Научного ответа нет; существуют различные философские и религиозные взгляды.",
-          "Сознание обязательно продолжает существование.",
-          "Сознание превращается в энергию.",
-          "Память полностью сохраняется во Вселенной."
-        ],
-        correct: 0
-      },
-      {
-        q: "Как решить этическую дилемму, где любой выбор ведёт к трагедии?",
-        answers: [
-          "Единственного правильного решения не существует; многое зависит от ценностей и контекста.",
-          "Всегда нужно выбирать вариант с меньшими потерями.",
-          "Следует отказаться от любого действия.",
-          "Необходимо подчиняться только закону."
-        ],
-        correct: 0
-      },
-      {
-        q: "Как ощущается осознание собственной смертности?",
-        answers: [
-          "Оно может одновременно усиливать тревогу и делать жизнь более ценной.",
-          "Оно всегда вызывает депрессию.",
-          "Люди практически никогда не думают об этом.",
-          "Это чувство полностью исчезает после зрелости."
-        ],
-        correct: 0
-      },
-      {
-        q: "Когда симпатия превращается в настоящую любовь?",
-        answers: [
-          "Когда ценность другого человека становится важнее собственного эго.",
-          "После трёх лет отношений.",
-          "После появления общей собственности.",
-          "Когда полностью исчезает ревность."
-        ],
-        correct: 0
-      },
-      {
-        q: "Что происходит во время глубокого изменения убеждений?",
-        answers: [
-          "Человек полностью переосмысливает прежнюю картину мира.",
-          "Просто запоминает новые факты.",
-          "Теряет способность сомневаться.",
-          "Меняется исключительно память."
-        ],
-        correct: 0
-      },
-      {
-        q: "Если постепенно заменить все атомы тела человека, останется ли он тем же человеком?",
-        answers: [
-          "Однозначного ответа нет; это философский парадокс идентичности.",
-          "Нет, личность исчезнет после первой замены.",
-          "Да, потому что атомы не имеют значения.",
-          "Всё зависит только от возраста человека."
-        ],
-        correct: 0
-      },
-      {
-        q: "Где проходит граница между личностью человека и влиянием общества?",
-        answers: [
-          "Чёткой границы определить невозможно.",
-          "Она заканчивается после совершеннолетия.",
-          "Всё определяется исключительно воспитанием.",
-          "Всё определяется исключительно генетикой."
-        ],
-        correct: 0
-      },
-      {
-        q: "Почему люди способны жертвовать собой ради других?",
-        answers: [
-          "Потому что мораль, любовь и убеждения могут оказаться важнее собственной жизни.",
-          "Из-за инстинкта самосохранения.",
-          "Только из-за давления общества.",
-          "Из-за недостатка логического мышления."
-        ],
-        correct: 0
-      },
-      {
-        q: "Откуда появляется творческое озарение?",
-        answers: [
-          "Из сложной бессознательной переработки опыта и неожиданных связей между идеями.",
-          "Только из высокого уровня интеллекта.",
-          "Исключительно из генетики.",
-          "Лишь после длительного отдыха."
-        ],
-        correct: 0
-      },
-      {
-        q: "Станет ли человек счастливее, если полностью исчезнут страдания?",
-        answers: [
-          "Не обязательно; счастье часто воспринимается через контраст и преодоление трудностей.",
-          "Да, абсолютно всегда.",
-          "Нет, счастье вообще невозможно.",
-          "Это зависит только от возраста."
-        ],
-        correct: 0
-      },
-      {
-        q: "Что делает человека человеком?",
-        answers: [
-          "Сочетание сознания, сострадания, поиска смысла, любви и способности создавать культуру.",
-          "Только высокий интеллект.",
-          "Исключительно наличие речи.",
-          "Только биологическое происхождение."
-        ],
-        correct: 0
-      }
+      { q: "1. Если человек совершил преступление, потому что все обстоятельства его жизни практически гарантированно привели бы его к этому поступку, насколько он действительно виновен?", a: ["Полностью виновен: обстоятельства не отменяют ответственности", "Частично виновен: обстоятельства уменьшают ответственность", "Виновен лишь формально, поскольку свободной воли практически не было", "Само понятие вины в таком случае становится проблематичным"], c: 3 },
+      { q: "2. Если человек делает добро исключительно ради собственной репутации, является ли его поступок морально добрым?", a: ["Да, важен сам результат", "Да, если он никому не причинил вреда", "Нет, намерение делает поступок эгоистичным", "Нельзя определить моральность только по мотиву"], c: 2 },
+      { q: "3. Представь общество, в котором люди никогда не лгут. Станет ли оно автоматически лучше нынешнего?", a: ["Да, исчезнет огромное количество социальных проблем", "Скорее да, хотя возникнут новые трудности", "Нет, некоторые виды лжи необходимы для существования общества", "Нет: абсолютная честность может быть разрушительнее лжи"], c: 3 },
+      { q: "4. Если искусственный интеллект когда-нибудь заявит, что испытывает боль, но мы не сможем доказать наличие у него сознания, обязаны ли мы считать его страдающим?", a: ["Да — отсутствие доказательства не оправдывает причинение страданий", "Только если его поведение достаточно убедительно", "Нет, пока существование сознания не доказано", "Само понятие «доказать сознание» может быть принципиально невозможным"], c: 0 },
+      { q: "5. Если большинство людей искренне считает что-либо морально правильным, делает ли это действие морально правильным?", a: ["Да, мораль формируется обществом", "Обычно да, но существуют исключения", "Нет, общество может коллективно ошибаться", "Вопрос «правильно ли» невозможно отделить от человеческих ценностей"], c: 2 },
+      { q: "6. Если человек мог спасти пять незнакомцев, пожертвовав одним незнакомцем, обязан ли он это сделать?", a: ["Да, пять жизней важнее одной", "Нет, нельзя намеренно пожертвовать невиновным человеком", "Зависит от обстоятельств", "Ни один математический подсчёт не способен определить моральную ценность жизни"], c: 3 },
+      { q: "7. Если полностью заменить тело человека искусственными органами, нейронами и частями мозга, в какой момент он перестанет быть тем же человеком?", a: ["Когда заменится определённая часть мозга", "Когда исчезнет биологическое тело", "Пока сохраняется непрерывность сознания — это тот же человек", "Невозможно установить объективную границу"], c: 3 },
+      { q: "8. Может ли человек быть свободным, если его характер, желания и решения являются результатом генетики и окружающей среды?", a: ["Нет", "Да, если он способен действовать согласно своим желаниям", "Да, но свобода имеет ограниченный характер", "Само понятие свободы требует пересмотра"], c: 3 },
+      { q: "9. Если ты узнаешь, что твои воспоминания были искусственно изменены, какие из них ты всё равно вправе считать частью своей личности?", a: ["Только истинные", "Даже ложные, если они повлияли на мою личность", "Только те, которые я сейчас осознаю", "Любые воспоминания, которые были частью непрерывной истории моего сознания"], c: 1 },
+      { q: "10. Что делает человека тем же человеком спустя 50 лет?", a: ["Его физическое тело", "Непрерывность сознания", "Память", "Непрерывность личности, несмотря на изменения"], c: 3 },
+      { q: "11. Если абсолютное счастье человечества можно получить только уничтожением способности людей испытывать сильную печаль, следует ли это сделать?", a: ["Да, если счастье гарантировано", "Да, если люди добровольно согласятся", "Нет, страдание является частью полноценного человеческого опыта", "Нельзя определить ценность счастья без возможности сравнить его с противоположностью"], c: 2 },
+      { q: "12. Если человек никогда не совершил плохого поступка только потому, что у него не было возможности его совершить, можно ли считать его морально хорошим?", a: ["Да", "Нет", "Только частично", "Невозможно определить моральность человека без проверки его выбора"], c: 3 },
+      { q: "13. Если закон несправедлив, обязан ли моральный человек его нарушить?", a: ["Да", "Нет, нарушение закона разрушает общественный порядок", "Только если нарушение способно исправить несправедливость", "Зависит от того, что считать более фундаментальным: закон или мораль"], c: 3 },
+      { q: "14. Если человек совершил ужасный поступок, а затем полностью изменился и стал другим человеком, должен ли он продолжать считаться тем же моральным субъектом?", a: ["Да, прошлые поступки остаются его ответственностью", "Нет, если его личность действительно изменилась", "Ответственность остаётся, но моральная оценка человека может измениться", "Нельзя одновременно отрицать прошлое и утверждать полную идентичность личности"], c: 2 },
+      { q: "15. Что важнее для справедливого общества?", a: ["Равенство результатов", "Равенство возможностей", "Вознаграждение людей пропорционально их заслугам", "Максимизация общего благополучия"], c: 3 },
+      { q: "16. Если абсолютно счастливый человек живёт в иллюзии, а несчастный человек знает правду о реальности, чья жизнь объективно лучше?", a: ["Счастливого", "Знающего правду", "Невозможно сравнить", "Зависит от того, что считать ценностью жизни"], c: 3 },
+      { q: "17. Если уничтожить все человеческие страдания, но вместе с ними исчезнут искусство, трагедии, глубокая эмпатия и значительная часть культуры, будет ли это прогрессом?", a: ["Да: уменьшение страдания важнее культуры", "Нет: страдание необходимо для человеческой культуры", "Зависит от того, какие формы страдания исчезнут", "Само разделение опыта на «страдание» и «ценность» может быть ошибочным"], c: 3 },
+      { q: "18. Если два человека имеют абсолютно одинаковые знания и способности, но один использует их для добра, а другой для зла, что именно делает их морально разными?", a: ["Их намерения", "Их действия", "Последствия их действий", "Наличие свободного выбора"], c: 0 },
+      { q: "19. Если никто никогда не узнает о твоём моральном поступке, существует ли у тебя причина совершать его?", a: ["Да — мораль не зависит от наблюдателей", "Только если поступок приносит пользу", "Нет, мораль возникает только внутри общества", "Причина существует, но её нельзя свести ни к выгоде, ни к наказанию"], c: 0 },
+      { q: "20. Представь машину, которая может идеально предсказывать каждое твоё решение за десять минут до того, как ты его примешь. Ты всё ещё свободен?", a: ["Нет", "Да", "Да, если предсказание не заставляет меня действовать", "Предсказуемость и отсутствие свободы — не одно и то же"], c: 3 },
+      { q: "21. Если уничтожение человечества гарантированно предотвратит огромное количество будущих страданий, будет ли уничтожение человечества морально оправданным?", a: ["Да", "Нет", "Только если будущие страдания гарантированы", "Нельзя считать несуществующих людей носителями страдания так же, как существующих"], c: 3 },
+      { q: "22. Может ли существовать объективная мораль, если во Вселенной нет разумного существа, способного её сформулировать?", a: ["Да, моральные истины могут существовать независимо от наблюдателей", "Нет, мораль существует только как человеческая конструкция", "Возможно, но мы не способны доказать это", "Вопрос предполагает, что «существование» морали должно быть таким же, как существование физических объектов"], c: 3 },
+      { q: "23. Самый сложный: если человек изменился настолько, что его нынешние ценности полностью противоречат ценностям его прошлого «я», кто из них имеет больше права определять, каким человеком он является?", a: ["Нынешний человек", "Прошлый человек, поскольку именно он сформировал основу личности", "Оба, поскольку между ними существует непрерывность", "Ни один: личность нельзя свести к одному набору ценностей"], c: 0 }
     ];
 
     let currentQuestion = 0;
     let score = 0;
 
-    function startApp(e) {
-      e.preventDefault();
-      document.getElementById('step-auth').classList.add('hidden');
-      document.getElementById('step-loader').classList.remove('hidden');
+    // Вставка вырезанных аватарок прямо в img
+    document.getElementById('img-melissa').src = avatars.melissa;
+    document.getElementById('img-pal').src = avatars.pal;
+    document.getElementById('img-folzy').src = avatars.folzy;
+    document.getElementById('img-mazellov').src = avatars.mazellov;
+    document.getElementById('img-nryb').src = avatars.nryb;
+    document.getElementById('img-sandorado').src = avatars.sandorado;
 
-      setTimeout(() => {
-        document.getElementById('step-loader').classList.add('hidden');
-        document.getElementById('step-quiz').classList.remove('hidden');
-        renderQuestion();
-      }, 2000);
+    function checkLoginInputs() {
+      const nick = document.getElementById('login-nickname').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const btn = document.getElementById('btn-login');
+      if (nick && pass) {
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    }
+
+    function handleLogin() {
+      const nick = document.getElementById('login-nickname').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const err = document.getElementById('login-error');
+
+      const found = validUsers.find(u => u.nick.toLowerCase() === nick.toLowerCase() && u.pass === pass);
+      if (found) {
+        err.classList.add('hidden');
+        document.getElementById('step-login').classList.add('hidden');
+        document.getElementById('step-members').classList.remove('hidden');
+      } else {
+        err.classList.remove('hidden');
+      }
+    }
+
+    function showApplyForm() {
+      document.getElementById('step-login').classList.add('hidden');
+      document.getElementById('step-apply').classList.remove('hidden');
+    }
+
+    function showLogin() {
+      document.getElementById('step-apply').classList.add('hidden');
+      document.getElementById('step-login').classList.remove('hidden');
+    }
+
+    function checkApplyInputs() {
+      const name = document.getElementById('apply-name').value.trim();
+      const fname = document.getElementById('apply-fname').value.trim();
+      const tag = document.getElementById('apply-tag').value.trim();
+      const btn = document.getElementById('btn-start-test');
+
+      if (name && fname && tag) {
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    }
+
+    function startTest() {
+      document.getElementById('step-apply').classList.add('hidden');
+      document.getElementById('step-quiz').classList.remove('hidden');
+      renderQuestion();
     }
 
     function renderQuestion() {
@@ -437,47 +490,56 @@
       document.getElementById('quiz-progress').innerText = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
       document.getElementById('quiz-question').innerText = q.q;
 
-      const optionsContainer = document.getElementById('quiz-options');
-      optionsContainer.innerHTML = '';
+      const container = document.getElementById('quiz-options');
+      container.innerHTML = '';
 
       const letters = ['A', 'B', 'C', 'D'];
-      q.answers.forEach((ans, index) => {
+      q.a.forEach((ans, idx) => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.innerText = `${letters[index]}. ${ans}`;
-        btn.onclick = () => selectAnswer(index);
-        optionsContainer.appendChild(btn);
+        btn.innerText = `${letters[idx]}) ${ans}`;
+        btn.onclick = () => selectOption(idx);
+        container.appendChild(btn);
       });
     }
 
-    function selectAnswer(index) {
-      if (index === questions[currentQuestion].correct) {
+    function selectOption(idx) {
+      if (idx === questions[currentQuestion].c) {
         score++;
       }
-
       currentQuestion++;
+
       if (currentQuestion < questions.length) {
         renderQuestion();
       } else {
-        finishQuiz();
+        finishTest();
       }
     }
 
-    function finishQuiz() {
+    function finishTest() {
       document.getElementById('step-quiz').classList.add('hidden');
       document.getElementById('step-result').classList.remove('hidden');
-      document.getElementById('user-score-text').innerText = `Ваш результат: ${score} / ${questions.length} (${Math.round((score/questions.length)*100)}%)`;
+      document.getElementById('user-score-text').innerText = `Правильных ответов: ${score} из ${questions.length}`;
 
-      // Имитация тайм-аута перед появлением кнопки ответа администрации (4 секунды)
+      // Ожидание 25 секунд для пранка
       setTimeout(() => {
-        document.getElementById('mini-loader').classList.add('hidden');
-        document.getElementById('show-response-btn').classList.remove('hidden');
-      }, 4000);
+        document.getElementById('wait-loader').classList.add('hidden');
+        document.getElementById('btn-show-response').classList.remove('hidden');
+      }, 25000);
     }
 
-    function showAdminResponse() {
-      document.getElementById('show-response-btn').classList.add('hidden');
-      document.getElementById('rejection-reason').classList.remove('hidden');
+    function revealResponse() {
+      document.getElementById('btn-show-response').classList.add('hidden');
+      const box = document.getElementById('response-text');
+      box.classList.remove('hidden');
+
+      if (score > 17) {
+        box.innerHTML = `<strong>ОТКЛОНЕНО АДМИНИСТРАЦИЕЙ</strong><br><br>Ваши ответы слишком подозрительны, доступ к серверу запрещён. Администратор усомнился в том, что вы человек, а не ИИ.`;
+      } else if (score >= 5 && score <= 16) {
+        box.innerHTML = `<strong>ОТКЛОНЕНО АДМИНИСТРАЦИЕЙ</strong><br><br>Ваши ответы не соответствуют требованиям администрации и проверки... Доступ закрыт.`;
+      } else {
+        box.innerHTML = `<strong>ОТКАЗ</strong><br><br>НЕТ. МАКСИМАЛЬНО НЕТ.`;
+      }
     }
   </script>
 
